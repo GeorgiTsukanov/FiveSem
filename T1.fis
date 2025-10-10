@@ -1,0 +1,22 @@
+[System]
+Name='T1'
+Type='mamdani'
+Version=2.0
+NumInputs=1
+NumOutputs=0
+NumRules=0
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='input1'
+Range=[0 240]
+NumMFs=3
+MF1='Низкая':'linzmf',[0 90]
+MF2='Средняя':'trimf',[0 90 180]
+MF3='Высокая':'linsmf',[90 180]
+
+[Rules]
