@@ -1,22 +1,68 @@
-% Матрица попарных сравнений для роста
-A = [1    2    3    4    5    6    7    8    9;
-     1/2  1    2    3    4    5    6    7    8;
-     1/3  1/2  1    2    3    4    5    6    7;
-     1/4  1/3  1/2  1    2    3    4    5    6;
-     1/5  1/4  1/3  1/2  1    2    3    4    5;
-     1/6  1/5  1/4  1/3  1/2  1    2    3    4;
-     1/7  1/6  1/5  1/4  1/3  1/2  1    2    3;
-     1/8  1/7  1/6  1/5  1/4  1/3  1/2  1    2;
-     1/9  1/8  1/7  1/6  1/5  1/4  1/3  1/2  1];
+% Матрица попарных сравнений с нелинейным предпочтением
+A = [1    1    1    2    3    5    7    8    9;
+     1    1    1    2    3    5    7    8    9;
+     1    1    1    2    3    5    7    8    9;
+     1/2  1/2  1/2  1    2    4    6    7    8;
+     1/3  1/3  1/3  1/2  1    3    5    6    7;
+     1/5  1/5  1/5  1/4  1/3  1    3    4    5;
+     1/7  1/7  1/7  1/6  1/5  1/3  1    2    3;
+     1/8  1/8  1/8  1/7  1/6  1/4  1/2  1    2;
+     1/9  1/9  1/9  1/8  1/7  1/5  1/3  1/2  1];
 
-% Проверка согласованности
+% Расчет вектора весов
 [n, ~] = size(A);
 [V, D] = eig(A);
 lambda_max = max(diag(D));
-CI = (lambda_max - n) / (n - 1);  % Index согласованности
-CR = CI / 1.45;  % Отношение согласованности (для n=9)
+[~, max_idx] = max(diag(D));
+w = real(V(:, max_idx));
+w_normalized = w / sum(w);
+
+% Визуализация
+heights = 160:5:200;
+
+figure('Position', [100, 100, 1200, 400]);
+
+% График 1: Вектор весов
+subplot(1, 3, 1);
+plot(heights, w_normalized, 'o-', 'LineWidth', 2, 'MarkerSize', 6);
+title('Вектор весов для "высокого роста"', 'FontSize', 12);
+xlabel('Рост (см)');
+ylabel('Вес');
+grid on;
+xticks(heights);
+
+% График 2: Функция принадлежности
+subplot(1, 3, 2);
+% Нормализуем для функции принадлежности [0,1]
+mf = (w_normalized - min(w_normalized)) / (max(w_normalized) - min(w_normalized));
+plot(heights, mf, 's-', 'LineWidth', 3, 'MarkerSize', 8, 'Color', [0.8 0.2 0.2]);
+title('Функция принадлежности "Высокий"', 'FontSize', 12);
+xlabel('Рост (см)');
+ylabel('Степень принадлежности');
+grid on;
+xticks(heights);
+ylim([0 1.1]);
+
+% График 3: Логарифмическая шкала для наглядности скачков
+subplot(1, 3, 3);
+semilogy(heights, w_normalized, 'd-', 'LineWidth', 2, 'MarkerSize', 6);
+title('Вектор весов (логарифмическая шкала)', 'FontSize', 12);
+xlabel('Рост (см)');
+ylabel('Вес (log scale)');
+grid on;
+xticks(heights);
+
+% Проверка согласованности
+CI = (lambda_max - n) / (n - 1);
+RI = 1.45; % для n=9
+CR = CI / RI;
 
 fprintf('λ_max = %.4f\n', lambda_max);
 fprintf('CI = %.4f\n', CI);
 fprintf('CR = %.4f\n', CR);
 fprintf('Матрица %sсогласованна\n', CR < 0.1 ? '' : 'НЕ ');
+
+fprintf('\nВектор весов:\n');
+for i = 1:length(heights)
+    fprintf('%d см: %.4f\n', heights(i), w_normalized(i));
+end
