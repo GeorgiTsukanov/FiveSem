@@ -1,68 +1,12 @@
-% Матрица попарных сравнений с нелинейным предпочтением
-A = [1    1    1    2    3    5    7    8    9;
-     1    1    1    2    3    5    7    8    9;
-     1    1    1    2    3    5    7    8    9;
-     1/2  1/2  1/2  1    2    4    6    7    8;
-     1/3  1/3  1/3  1/2  1    3    5    6    7;
-     1/5  1/5  1/5  1/4  1/3  1    3    4    5;
-     1/7  1/7  1/7  1/6  1/5  1/3  1    2    3;
-     1/8  1/8  1/8  1/7  1/6  1/4  1/2  1    2;
-     1/9  1/9  1/9  1/8  1/7  1/5  1/3  1/2  1];
-
-% Расчет вектора весов
-[n, ~] = size(A);
-[V, D] = eig(A);
-lambda_max = max(diag(D));
-[~, max_idx] = max(diag(D));
-w = real(V(:, max_idx));
-w_normalized = w / sum(w);
-
-% Визуализация
-heights = 160:5:200;
-
-figure('Position', [100, 100, 1200, 400]);
-
-% График 1: Вектор весов
-subplot(1, 3, 1);
-plot(heights, w_normalized, 'o-', 'LineWidth', 2, 'MarkerSize', 6);
-title('Вектор весов для "высокого роста"', 'FontSize', 12);
-xlabel('Рост (см)');
-ylabel('Вес');
-grid on;
-xticks(heights);
-
-% График 2: Функция принадлежности
-subplot(1, 3, 2);
-% Нормализуем для функции принадлежности [0,1]
-mf = (w_normalized - min(w_normalized)) / (max(w_normalized) - min(w_normalized));
-plot(heights, mf, 's-', 'LineWidth', 3, 'MarkerSize', 8, 'Color', [0.8 0.2 0.2]);
-title('Функция принадлежности "Высокий"', 'FontSize', 12);
-xlabel('Рост (см)');
-ylabel('Степень принадлежности');
-grid on;
-xticks(heights);
-ylim([0 1.1]);
-
-% График 3: Логарифмическая шкала для наглядности скачков
-subplot(1, 3, 3);
-semilogy(heights, w_normalized, 'd-', 'LineWidth', 2, 'MarkerSize', 6);
-title('Вектор весов (логарифмическая шкала)', 'FontSize', 12);
-xlabel('Рост (см)');
-ylabel('Вес (log scale)');
-grid on;
-xticks(heights);
-
-% Проверка согласованности
-CI = (lambda_max - n) / (n - 1);
-RI = 1.45; % для n=9
-CR = CI / RI;
-
-fprintf('λ_max = %.4f\n', lambda_max);
-fprintf('CI = %.4f\n', CI);
-fprintf('CR = %.4f\n', CR);
-fprintf('Матрица %sсогласованна\n', CR < 0.1 ? '' : 'НЕ ');
-
-fprintf('\nВектор весов:\n');
-for i = 1:length(heights)
-    fprintf('%d см: %.4f\n', heights(i), w_normalized(i));
-end
+% Интересная нелинейная матрица для "высокого роста"
+A_interesting = [
+    1    1/2  1/4  1/6  1/8  1/9  1/9  1/9  1/9;   % 160 см
+    2    1    1/2  1/4  1/6  1/8  1/9  1/9  1/9;   % 165 см  
+    4    2    1    1/2  1/4  1/6  1/8  1/9  1/9;   % 170 см
+    6    4    2    1    1/2  1/4  1/6  1/8  1/9;   % 175 см
+    8    6    4    2    1    1/2  1/4  1/6  1/8;   % 180 см
+    9    8    6    4    2    1    1/2  1/4  1/6;   % 185 см
+    9    9    8    6    4    2    1    1/2  1/4;   % 190 см
+    9    9    9    8    6    4    2    1    1/2;   % 195 см
+    9    9    9    9    8    6    4    2    1     % 200 см
+];
