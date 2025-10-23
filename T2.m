@@ -1,12 +1,13 @@
-A =[1	1/2	1/3	1/4	1/5	1/6	1/7	1/8	1/9;
-    2	1	1/2	1/3	1/4	1/5	1/6	1/7	1/8;
-    3	2	1	1/2	1/3	1/4	1/5	1/6	1/7;
-    4	3	2	1	1/2	1/3	1/4	1/5	1/6;
-    5	4	3	2	1	1/2	1/3	1/4	1/5;
-    6	5	4	3	2	1	1/2	1/3	1/4;
-    7	6	5	4	3	2	1	1/2	1/3;
-    8	7	6	5	4	3	2	1	1/2;
-    9	8	7	6	5	4	3	2	1];
+% gaus 77.9182 255.89
+
+A = [1    1/2  1/4  1/6  1/8  1/9  1/9  1/9;
+            2    1    1/2  1/4  1/6  1/8  1/9  1/9;
+            4    2    1    1/2  1/4  1/6  1/8  1/9;
+            6    4    2    1    1/2  1/4  1/6  1/8;
+            8    6    4    2    1    1/2  1/4  1/6;
+            9    8    6    4    2    1    1/2  1/4;
+            9    9    8    6    4    2    1    1/2;
+            9    9    9    8    6    4    2    1];
 
 [vectors, values] = eig(A);
 
@@ -21,22 +22,21 @@ W1 = real(vector) / sum(real(vector))
 
 W = W1 / max(W1)
 
+x = linspace(0, 240, length(W)); 
 
-x = 1:length(W1);
-y = W1;
-
-p_poly = polyfit(x, y, 2); % квадратичная
-y_poly = polyval(p_poly, x);
-
-x_fine = 1:0.1:length(W1);
-y_spline = spline(x, y, x_fine);
-
-% График сравнения
 figure;
-plot(x, y, 'bo-', 'LineWidth', 2, 'MarkerSize', 8); hold on;
-plot(x, y_poly, 'r--', 'LineWidth', 2);
-plot(x_fine, y_spline, 'g-', 'LineWidth', 1);
-legend('Исходные веса', 'Полиномиальная', 'Сплайн', 'Location', 'best');
+plot(x, W, 'ro-', 'LineWidth', 2, 'MarkerSize', 8, 'MarkerFaceColor', 'red');
 grid on;
-ylabel('Вес');
+
+xlabel('Зарплата, тыс. руб.', 'FontSize', 12);
+ylabel('Степень принадлежности', 'FontSize', 12);
+title('Функция принадлежности: "Высокая зарплата"', 'FontSize', 14);
+
+xlim([0, 240]);
+xticks(0:30:240);
+
+ylim([0, 1.1]);
+yticks(0:0.1:1);
+
+
 
